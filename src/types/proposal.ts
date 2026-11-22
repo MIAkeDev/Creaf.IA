@@ -1,0 +1,42 @@
+export type PublicProviderPreview = {
+  providerId: string;
+  serviceId: string;
+  category: string;
+  serviceName: string;
+  price: number;
+  priceKind: 'from' | 'fixed';
+  yearsExperience?: number;
+  eventsCompleted?: number;
+  rating?: number;
+  shortDescription?: string;
+  evidenceImage?: string;
+  evidenceImages: string[];
+  includes: string[];
+};
+export type EventProposal = {
+  id: string;
+  type: 'saving' | 'recommended' | 'upgrade';
+  title: string;
+  budget: number;
+  total: number;
+  difference: number;
+  reason: string;
+  providers: PublicProviderPreview[];
+  improvedCategories: string[];
+  isAlternative: boolean;
+};
+export type ProposalResults = {
+  proposals: EventProposal[];
+  compatibleProviders: number;
+  compatibleServices: number;
+  combinationsEvaluated: number;
+  missingCategories: string[];
+  selectedServices: string[];
+  suggestedBudget?: number;
+  minimumTotal?: number;
+  canAllowAlternatives: boolean;
+  blockers: { category: string; reason: 'not_registered' | 'inactive' | 'city' | 'event_type' | 'capacity' | 'quote_required' | 'budget'; message: string; capacityRanges?: { min: number; max: number | null }[] }[];
+  allowAlternatives: boolean;
+  searchLimited: boolean;
+};
+export type ServiceOptions = { options: { category: string; packages: number; compatiblePackages: number; capacityRanges: { min: number; max: number | null }[] }[] };

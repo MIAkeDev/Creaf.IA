@@ -1,0 +1,6 @@
+.blur-text { display: inline; }
+.blur-text-unit { display: inline-block; opacity: 0; filter: blur(var(--blur-amount)); transform: translate3d(var(--blur-x), var(--blur-y), 0); }
+.blur-text.is-visible .blur-text-unit { animation: blur-text-arrive var(--blur-duration) cubic-bezier(.2,.65,.25,1) var(--blur-delay) both; }
+.blur-text.focus-on-hover:hover .blur-text-unit { filter: none !important; transform: none !important; opacity: 1 !important; }
+@keyframes blur-text-arrive { from { opacity: 0; filter: blur(var(--blur-amount)); transform: translate3d(var(--blur-x), var(--blur-y), 0); } to { opacity: 1; filter: blur(0); transform: translate3d(0,0,0); } }
+@media (prefers-reduced-motion: reduce) { .blur-text .blur-text-unit { animation: none !important; opacity: 1; filter: none; transform: none; } }

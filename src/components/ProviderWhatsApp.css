@@ -1,0 +1,12 @@
+.provider-whatsapp{position:fixed;right:clamp(16px,3vw,38px);bottom:calc(110px + env(safe-area-inset-bottom));z-index:12;display:flex;flex-direction:column;align-items:flex-end;gap:10px;max-width:min(340px,calc(100vw - 32px))}
+.provider-whatsapp-trigger{display:flex;align-items:center;gap:9px;min-height:47px;border:1px solid #ffffffc9;border-radius:999px;padding:6px 17px 6px 7px;background:#2f776d;color:#f7fffd;box-shadow:0 12px 30px #244c4550,inset 0 1px #ffffff53;font-family:inherit;font-size:13px;font-weight:600;line-height:1.3;cursor:pointer;transition:transform .2s,box-shadow .2s}
+.provider-whatsapp-trigger:hover{transform:translateY(-2px);box-shadow:0 15px 34px #244c4560,inset 0 1px #ffffff53}
+.provider-whatsapp-trigger:focus-visible,.provider-whatsapp-close:focus-visible,.provider-whatsapp-card a:focus-visible{outline:3px solid #73c4bb;outline-offset:3px}
+.provider-whatsapp-icon{display:grid;place-items:center;width:33px;height:33px;border-radius:50%;background:#25d366;line-height:1}
+.provider-whatsapp-icon img{display:block;width:70%;height:70%;object-fit:contain;filter:brightness(0) invert(1)}
+.provider-whatsapp-card{position:relative;width:330px;max-width:100%;padding:22px;border:1px solid #d8eeeb;border-radius:22px;background:#f7fcfbee;box-shadow:0 22px 55px #244c4532;backdrop-filter:blur(18px);color:#294b48}
+.provider-whatsapp-card strong{display:block;padding-right:19px;font-size:18px;line-height:1.3}
+.provider-whatsapp-card p{margin:10px 0 17px;color:#607b78;font-size:13px;line-height:1.55}
+.provider-whatsapp-card a{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 15px;border-radius:13px;background:#2f776d;color:#fff;font-size:13px;font-weight:650}
+.provider-whatsapp-close{position:absolute;top:10px;right:11px;border:0;background:none;color:#66827e;font-size:25px;line-height:1;cursor:pointer}
+@media(max-width:600px){.provider-whatsapp{right:14px;bottom:calc(112px + env(safe-area-inset-bottom))}.provider-whatsapp-trigger{min-height:44px;font-size:12px}.provider-whatsapp-icon{width:30px;height:30px}.provider-whatsapp-card{width:min(320px,calc(100vw - 28px))}}

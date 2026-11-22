@@ -1,0 +1,19 @@
+@keyframes breathing{0%,100%{transform:scale(1)}50%{transform:scale(1.018)}}
+@keyframes floating{0%,100%{translate:0 0}50%{translate:0 -4px}}
+@keyframes softFloat{0%,100%{translate:0 0}50%{translate:0 -3px}}
+@keyframes microRotation{0%,100%{rotate:-1deg}50%{rotate:1deg}}
+@keyframes blinkEffect{0%,44%,47%,100%{scale:1 1}45.5%{scale:1 .1}}
+@keyframes wakeBounce{0%,100%{translate:0 0}50%{translate:0 -5px}}
+@keyframes yawnStretch{0%,100%{transform:scale(1)}60%{transform:scale(1.035,1.045)}}
+@keyframes annoyedShake{0%,100%{transform:rotate(0)}30%{transform:rotate(-2deg) translateY(3px)}65%{transform:rotate(2deg)}}
+@keyframes thinkingTilt{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(1deg)}}
+@keyframes searchPulse{0%,100%{scale:1}50%{scale:1.015}}
+@keyframes friendlyPop{0%{transform:scale(.96)}65%{transform:scale(1.025)}100%{transform:scale(1)}}
+@keyframes shadowFloat{0%,100%{transform:scaleX(1);opacity:.13}50%{transform:scaleX(.9);opacity:.09}}
+@keyframes floatingZ{0%,20%,100%{opacity:0;transform:translateY(5px)}40%,65%{opacity:.7}85%{opacity:0;transform:translateY(-10px)}}
+@keyframes appear{from{opacity:0}to{opacity:1}}
+@keyframes disappear{from{opacity:1}to{opacity:0}}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes orbit{to{transform:rotate(360deg)}}
+.breathing,.state-sleeping{animation:breathing 5s ease-in-out infinite,softFloat 5s ease-in-out infinite}.floating{animation:floating 4s ease-in-out infinite}.softFloat{animation:softFloat 5s ease-in-out infinite}.microRotation{animation:microRotation 5s ease-in-out infinite}.blinkEffect{animation:blinkEffect 7s infinite}.wakeBounce{animation:wakeBounce .6s}.yawnStretch,.state-waking{animation:yawnStretch .6s ease,wakeBounce .6s ease}.annoyedShake,.state-annoyed{animation:annoyedShake .6s ease}.thinkingTilt,.state-thinking{animation:thinkingTilt 4s ease-in-out infinite,microRotation 5s ease-in-out infinite}.searchPulse,.state-searching{animation:searchPulse 2s ease-in-out infinite,floating 3s ease-in-out infinite}.friendlyPop,.state-friendly{animation:friendlyPop .6s cubic-bezier(.34,1.56,.64,1),softFloat 5s .6s ease-in-out infinite}.state-confused{animation:microRotation 2s ease-in-out infinite}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;scroll-behavior:auto!important;transition:none!important}.avatar-layer.current{animation:appear .25s ease both!important}.avatar-layer.previous{animation:disappear .25s ease both!important}.zzz{opacity:.6}}

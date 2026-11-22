@@ -1,0 +1,14 @@
+node_modules/
+dist/
+*.local
+.npm-cache/
+.env
+.env.*
+!.env.example
+data/*.tmp
+data/archive/
+data/provider-images/
+data/provider-preview.json
+data/providers.json
+output/
+.vercel/

@@ -1,0 +1,67 @@
+/* The introduction keeps the mascot. The first message frees the full conversation area. */
+.app { min-height: 0; }
+.phase-splash .splash-copy { max-width: 1080px; }
+.phase-splash .splash-copy h1 { font-size: clamp(44px, min(6.4vw, 9dvh), 84px); letter-spacing: -.055em; line-height: 1.08; margin-bottom: 25px; }
+.phase-splash .splash-copy h1 > .blur-text { color: #293f47; }
+.phase-splash .splash-copy h1 > .welcome-accent { color: #65949d; }
+.phase-splash .splash-copy h1 > .blur-text span { color: inherit; }
+.phase-splash .splash-copy p { font-size: clamp(16px, 1.4vw, 19px); }
+.phase-splash .friend { opacity: .8; }
+.phase-splash .friend-left { top: 52%; }
+.phase-splash .friend-right { top: 48%; }
+.compact-chat-assistant { display: flex; align-items: center; gap: 13px; color: #67858c; font-size: 13px; }
+.compact-chat-avatar { width: 53px; height: 53px; flex-shrink: 0; }
+.compact-chat-avatar .monkey-halo { opacity: .3; }
+.compact-chat-avatar .monkey-shadow, .compact-chat-avatar .accessory { display: none; }
+.app.phase-chat.has-messages > header { height: 76px; padding: 0 max(28px, calc((100vw - 1340px) / 2)); }
+.app.phase-chat.has-messages main { padding: 0; }
+.app.phase-chat.has-messages .chat-shell { width: min(100% - 48px, 1320px); padding: 0; padding-top: 0; padding-left: 0; }
+.app.phase-chat.has-messages .conversation { padding: 14px 14px 28px; mask-image: linear-gradient(transparent, #000 8px, #000 calc(100% - 8px), transparent); }
+.app.phase-chat.has-messages .message.assistant .formatted-message { max-width: 90ch; }
+.app.phase-chat.has-messages .message.user > div { max-width: min(80%, 820px); }
+.app.phase-chat.has-messages footer { padding: 9px 20px max(10px, env(safe-area-inset-bottom)); font-size: 12px; }
+.composer-control { position: relative; }
+.composer .composer-control textarea { padding-right: 125px; }
+.composer .composer-send { position: absolute; bottom: 9px; right: 9px; min-height: 48px; min-width: 98px; }
+.composer .composer-send .specular-content { justify-content: space-between; }
+.composer .composer-send .specular-content > span { font-size: 21px; line-height: 1; }
+.app.phase-chat.has-messages .composer { padding-top: 9px; }
+.app.phase-chat.has-messages .composer p { margin: 8px 0 0; }
+.event-proposal-card .proposal-view-button.specular-button { justify-content: space-between; width: 100%; font-size: 15px; min-height: 54px; margin-top: 15px; box-shadow: inset 0 1px #ffffff55, 0 7px 20px #335c6524; }
+.event-proposal-card .proposal-card-body { padding-top: 19px; }
+.event-proposal-card .proposal-reason { margin-bottom: 0 !important; }
+.proposal-view-button .proposal-view-arrow { display: grid; place-items: center; width: 25px; height: 25px; border-radius: 50%; background: #ffffff14; font-size: 18px; }
+.proposal-recommended .proposal-view-button.specular-button { box-shadow: inset 0 1px #ffffff55, 0 8px 22px #2f67562b; }
+@media (min-width: 1500px) { .app.phase-chat.has-messages .chat-shell { width: min(100% - 80px, 1420px); } }
+@media (max-width: 600px) {
+  .phase-splash main { gap: clamp(20px, 3.5dvh, 30px); }
+  .phase-splash .splash-copy { max-width: 410px; padding: 0 5px; }
+  .phase-splash .splash-copy h1 { font-size: clamp(39px, min(10.7vw, 7.8dvh), 58px); letter-spacing: -.055em; margin-bottom: 22px; }
+  .phase-splash .splash-copy p { max-width: 285px; margin: auto; font-size: 16px; line-height: 1.6; }
+  .phase-splash .friend-left { top: 64%; left: -177px; opacity: .6; }
+  .phase-splash .friend-right { top: 60%; right: -177px; opacity: .6; }
+  .phase-splash .character-stage { width: clamp(150px, 25dvh, 230px); }
+  .app.phase-chat.has-messages > header { height: 64px; padding: 0 20px; }
+  .app.phase-chat.has-messages .wordmark { font-size: 26px; }
+  .compact-chat-assistant { gap: 8px; font-size: 12px; }
+  .compact-chat-assistant > span { display: none; }
+  .compact-chat-avatar { width: 43px; height: 43px; }
+  .app.phase-chat.has-messages .chat-shell { width: calc(100% - 28px); }
+  .app.phase-chat.has-messages .conversation { padding: 8px 7px 20px; }
+  .app.phase-chat.has-messages .message { font-size: 16px; }
+  .app.phase-chat.has-messages .message.user > div { max-width: 90%; padding: 10px 16px; }
+  .composer .composer-control textarea { padding-left: 17px; padding-right: 111px; font-size: 16px; }
+  .composer .composer-send { min-width: 88px; padding: 11px 14px; }
+  .app.phase-chat.has-messages footer { font-size: 12px; padding-top: 6px; padding-bottom: max(9px, env(safe-area-inset-bottom)); }
+  .app.phase-chat.has-messages .composer p { font-size: 12px; margin-top: 6px; }
+}
+@media (max-height: 480px) {
+  .phase-splash .splash-copy h1 { font-size: clamp(28px, 5vw, 39px); margin-bottom: 14px; }
+  .phase-splash .splash-copy p { font-size: 15px; }
+  .app.phase-chat.has-messages > header { height: 48px; }
+  .compact-chat-avatar { width: 37px; height: 37px; }
+  .app.phase-chat.has-messages footer, .app.phase-chat.has-messages .composer p { display: none; }
+  .app.phase-chat.has-messages .conversation { padding-top: 5px; }
+  .composer .composer-control textarea { min-height: 58px; }
+  .composer .composer-send { min-height: 42px; bottom: 8px; }
+}

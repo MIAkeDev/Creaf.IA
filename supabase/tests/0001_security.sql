@@ -1,0 +1,14 @@
+begin;
+select plan(10);
+select ok((select relrowsecurity from pg_class where oid = 'public.quotations'::regclass), 'quotations has RLS');
+select ok((select relrowsecurity from pg_class where oid = 'public.quotation_private'::regclass), 'private snapshots have RLS');
+select ok((select relrowsecurity from pg_class where oid = 'public.provider_records'::regclass), 'catalog has RLS');
+select ok((select relrowsecurity from pg_class where oid = 'public.admin_users'::regclass), 'admin membership has RLS');
+select ok(not has_table_privilege('anon', 'public.quotations', 'SELECT'), 'anonymous cannot read quotations');
+select ok(has_table_privilege('authenticated', 'public.quotations', 'SELECT'), 'signed-in user can read own quotations through policy');
+select ok(not has_table_privilege('authenticated', 'public.quotations', 'INSERT'), 'client cannot create quotations directly');
+select ok(not has_table_privilege('authenticated', 'public.quotation_private', 'SELECT'), 'client cannot read private snapshots');
+select ok(not has_table_privilege('authenticated', 'public.provider_records', 'SELECT'), 'client cannot read catalog');
+select ok(not has_table_privilege('authenticated', 'public.admin_users', 'SELECT'), 'client cannot read admin membership');
+select * from finish();
+rollback;

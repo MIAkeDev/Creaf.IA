@@ -1,0 +1,44 @@
+.thought-line {
+  color: #587d8a;
+  margin: 0 0 22px;
+  line-height: 1.5;
+}
+.thought-heading {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 6px 0;
+  min-height: 44px;
+  max-width: 100%;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+}
+button.thought-heading { cursor: pointer; border-radius: 8px; }
+.thought-heading:focus-visible { outline: 2px solid #8ac4d5; outline-offset: 4px; }
+.thought-glyph { font-size: 1.4em; line-height: 1; color: #77aaba; }
+.thought-time { font-size: .85em; color: #6c8b97; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.thought-working .thought-label,
+.thought-working .thought-glyph { animation: thoughtBreath var(--thought-period) ease-in-out infinite; }
+.thought-chevron { width: 16px; height: 16px; flex-shrink: 0; transition: transform var(--thought-settle) ease; }
+.thought-chevron path { fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.5; }
+[aria-expanded=true] .thought-chevron { transform: rotate(180deg); }
+.thought-details { display: grid; grid-template-rows: 0fr; opacity: 0; visibility: hidden; transition: grid-template-rows var(--thought-settle) ease, opacity var(--thought-settle) ease, visibility var(--thought-settle); }
+.thought-details.expanded { grid-template-rows: 1fr; opacity: 1; visibility: visible; }
+.thought-details>div { overflow: hidden; }
+.thought-steps { list-style: none; margin: 3px 0 9px 11px; padding: 0 0 0 21px; border-left: 1px solid #c8e0e8; font-size: .85em; }
+.thought-steps li { position: relative; padding: 5px 0; overflow-wrap: anywhere; transition: color var(--thought-settle); }
+.thought-step-dot { position: absolute; width: 5px; height: 5px; border-radius: 50%; background: #b5cdd6; left: -24px; top: 13px; }
+.thought-steps .active { color: #3c6b7d; }
+.thought-steps .active .thought-step-dot { background: #6aa7bc; box-shadow: 0 0 0 4px #b9e0ec50; animation: thoughtBreath var(--thought-period) ease-in-out infinite; }
+.thought-steps .pending { color: #829aa4; }
+.thought-steps .complete .thought-step-dot { background: #86afba; }
+.thought-settling .thought-label,
+.thought-settling .thought-glyph { animation: thoughtSettle var(--thought-settle) ease both; }
+@keyframes thoughtBreath { 0%,100% { opacity: 1; } 50% { opacity: var(--thought-low-opacity); } }
+@keyframes thoughtSettle { from { opacity: .55; filter: blur(var(--thought-blur)); } to { opacity: 1; filter: blur(0); } }
+@media (prefers-reduced-motion: reduce) {
+  .thought-line *, .thought-details { animation: none !important; transition: none !important; }
+}

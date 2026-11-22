@@ -1,0 +1,20 @@
+.service-selector { max-width: 680px; margin: 2px 0 26px; padding: 20px; border: 1px solid #d3e5ec; border-radius: 20px; background: #ffffff80; }
+.service-selector fieldset { margin: 0; padding: 0; border: 0; min-width: 0; }
+.service-selector legend { font-size: 16px; font-weight: 550; color: #365b69; padding: 0; margin-bottom: 8px; }
+.service-selector .service-help, .service-help { font-size: 14px; color: #617f8b; line-height: 1.6; margin: 0 0 14px; }
+.service-selector label { display: flex; align-items: center; gap: 10px; cursor: pointer; min-height: 44px; font-size: 15px; color: #36535f; }
+.service-selector input { width: 17px; height: 17px; margin: 0; accent-color: #528e9e; flex-shrink: 0; }
+.service-selector input:focus-visible { outline: 2px solid #8abecf; outline-offset: 4px; }
+.service-selector .service-all { border-bottom: 1px solid #dce9ed; padding-bottom: 8px; margin-bottom: 8px; font-weight: 550; }
+.service-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px 16px; }
+.service-options span { overflow-wrap: anywhere; }
+.service-selector-footer { display: flex; align-items: center; flex-wrap: wrap; gap: 12px 16px; margin-top: 16px; }
+.service-selector-footer button { min-height: 44px; padding: 10px 18px; border: 1px solid #accfd9; border-radius: 18px; background: #e5f2f6; color: #315c6a; cursor: pointer; font-size: 14px; }
+.service-selector-footer button:focus-visible { outline: 2px solid #77adbf; outline-offset: 3px; }
+.service-selector-footer button:disabled { opacity: .55; cursor: default; }
+.service-selector-footer .service-help { margin: 0; }
+.service-selector .service-custom { margin: 15px 0 0; }
+.service-selector fieldset:disabled label { cursor: default; opacity: .65; }
+@media (max-width: 430px) { .service-selector { padding: 16px; } .service-options { gap: 6px 12px; } .service-selector label { font-size: 14px; } }
+
+.service-capacity{display:block;font-size:13px;line-height:1.5;color:var(--text-muted);margin-top:5px}

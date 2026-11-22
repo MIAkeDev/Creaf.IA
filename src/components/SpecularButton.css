@@ -1,0 +1,39 @@
+.specular-button.specular-button {
+  --specular-x: 50%; --specular-y: 0%; --specular-active: 0;
+  position: relative; isolation: isolate; overflow: hidden; display: inline-flex;
+  align-items: center; justify-content: center; gap: 10px; min-height: 46px;
+  padding: 12px 19px; font: inherit; font-size: 14px; font-weight: 550;
+  line-height: 1.35; cursor: pointer; vertical-align: middle;
+  box-shadow: inset 0 1px 0 #ffffff35, 0 5px 15px #365d6610, 0 0 calc(var(--specular-glow) * 12px) color-mix(in srgb, var(--specular-line) 8%, transparent);
+  transition: box-shadow 220ms, transform 180ms, opacity 180ms, filter 220ms;
+  -webkit-tap-highlight-color: transparent;
+}
+.specular-button.specular-sm { min-height: 40px; padding: 9px 14px; font-size: 13px; }
+.specular-button.specular-lg { min-height: 54px; padding: 15px 22px; font-size: 15px; }
+.specular-content { position: relative; z-index: 2; display: inline-flex; align-items: center; justify-content: inherit; gap: inherit; width: 100%; }
+.specular-wash, .specular-glint { position: absolute; inset: 0; pointer-events: none; border-radius: inherit; }
+.specular-wash { z-index: 0; background: var(--specular-tint); opacity: var(--specular-tint-opacity); }
+.specular-glint {
+  z-index: 1;
+  background: radial-gradient(circle var(--specular-spot) at var(--specular-x) var(--specular-y), color-mix(in srgb, var(--specular-tint) 18%, transparent), transparent var(--specular-fade));
+  opacity: clamp(0, calc(var(--specular-idle) * .45 + var(--specular-active) * var(--specular-intensity) * .65), 1);
+  transition: opacity 180ms;
+}
+.specular-button::after {
+  content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: linear-gradient(115deg, transparent 25%, #ffffff08 40%, #ffffff28 50%, #ffffff06 59%, transparent 72%);
+  transform: translateX(-140%); transition: transform 650ms cubic-bezier(.2,.65,.25,1);
+}
+.specular-button:not(:disabled):hover { filter: brightness(1.04); box-shadow: inset 0 1px #ffffff55, 0 7px 22px #477e8526; }
+.specular-button:not(:disabled):hover::after, .specular-button:focus-visible::after { transform: translateX(140%); }
+.specular-button:not(:disabled):active { transform: translateY(1px); }
+.specular-button:focus-visible { outline: 3px solid #88c4cb; outline-offset: 4px; }
+.specular-button:focus-visible .specular-glint { opacity: .7; background-position: center; }
+.specular-button:disabled { opacity: .48; cursor: default; box-shadow: none; }
+.specular-button:disabled::after { display: none; }
+.specular-button:disabled .specular-glint { opacity: 0; }
+@media (prefers-reduced-motion: reduce) {
+  .specular-button.specular-button, .specular-glint, .specular-button::after { transition: none; }
+  .specular-button::after { display: none; }
+  .specular-button:not(:disabled):active { transform: none; }
+}
