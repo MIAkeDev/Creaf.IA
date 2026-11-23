@@ -15,7 +15,7 @@ export function ProviderWhatsApp() {
       <p>Escríbenos para registrarlo. Podrá aparecer en las cotizaciones cuando sea compatible con lo que busca cada persona.</p>
       <a href={`https://wa.me/${phone}?text=${message}`} target="_blank" rel="noopener noreferrer">Escribir por WhatsApp <span aria-hidden="true">↗</span></a>
     </div>}
-    <button className="provider-whatsapp-trigger" type="button" aria-expanded={open} aria-controls="provider-whatsapp-card" onClick={() => setOpen(value => !value)}>
+    <button className="provider-whatsapp-trigger" type="button" aria-label="¿Ofreces un servicio? Contactar por WhatsApp" aria-expanded={open} aria-controls="provider-whatsapp-card" onClick={() => setOpen(value => !value)}>
       <span className="provider-whatsapp-icon" aria-hidden="true">
         <img src={`${import.meta.env.BASE_URL}avatar/whatsapp-official.svg`} alt="" />
       </span><span>¿Ofreces un servicio?</span>

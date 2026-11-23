@@ -26,13 +26,13 @@ function App() {
   return <div className={`app phase-${chat.phase} ${chat.phase === 'chat' ? '' : 'hero'} ${hasConversation ? 'has-messages' : ''} ${chat.messages.some(message => message.role === 'assistant') ? 'has-response' : ''}`} onPointerDown={chat.activity}>
     <div className="water-world" aria-hidden="true"><div className="water-light"/><div className="water-caustics"/><div className="water-orbit orbit-one"/><div className="water-orbit orbit-two"/>{Array.from({ length: 8 }, (_, i) => <i key={i} className={`water-bubble bubble-${i}`}/>)}</div>
     {chat.phase !== 'chat' ? <LandingPage onStart={() => void chat.wakeUp()} transitioning={chat.phase === 'transitioning'}/> : <>
-      <header><a className="wordmark" href={import.meta.env.BASE_URL} aria-label="CreafIA, inicio">creaf<span>ia</span><i/></a>{hasConversation && <div className="compact-chat-assistant"><span>{chat.isBusy ? descriptions[chat.state] : 'Tu evento empieza aquí'}</span><div className="compact-chat-avatar"><MonkeyAvatar state={chat.state}/></div></div>}<AuthMenu/></header>
+      <header><a className="wordmark" href={import.meta.env.BASE_URL} aria-label="CreafIA, inicio">creaf<span>ia</span><i/></a>{hasConversation && <div className="compact-chat-assistant"><span>{chat.isBusy ? descriptions[chat.state] : 'Tu evento empieza aquí'}</span><div className="compact-chat-avatar"><MonkeyAvatar state={chat.state}/></div></div>}<div className="chat-header-actions"><ProviderWhatsApp/><AuthMenu/></div></header>
       <main>{!hasConversation && <div className="character-stage"><div className="water-pool"><span/><span/><span/></div><MonkeyAvatar state={chat.state} hero interactive ready={!!chat.draft.trim() && !chat.isBusy} disabled={chat.isBusy} onClick={send}/><div className="character-caption" aria-hidden="true"><i/>{chat.isBusy ? descriptions[chat.state] : chat.draft.trim() ? 'Tócame y lo pensamos' : 'Aquí, contigo'}</div></div>}
         <section className="chat-shell" aria-label="Chat con CreafIA" aria-busy={chat.isBusy}><div className={hasConversation ? 'visually-hidden' : 'chat-heading'}><h1>{hasConversation ? 'Tu planificación con CreafIA' : '¿Cotizamos tu evento?'}</h1>{!hasConversation && <p>Empieza con un hola o cuéntame qué estás planeando.</p>}</div><ChatWindow messages={chat.messages} state={chat.state} busy={chat.isBusy} eventState={chat.eventState} servicePickerRequested={chat.servicePickerRequested} onConfirmServices={chat.confirmServices} proposalLoading={chat.proposalLoading} proposalError={chat.proposalError} proposalActions={chat.proposalActions}/><ChatInput value={chat.draft} onChange={chat.setDraft} onSend={send} busy={chat.isBusy}/></section>
       </main>
       <footer><span>La IA puede equivocarse. Verifica lo importante.</span></footer>
     </>}
-    <ProviderWhatsApp/>
+    {chat.phase !== 'chat' && <ProviderWhatsApp/>}
     <PendingCoordination/>
     <span className="visually-hidden" role="status">{descriptions[chat.state]}</span>
   </div>;
