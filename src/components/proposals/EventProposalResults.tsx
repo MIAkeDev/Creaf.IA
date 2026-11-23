@@ -15,23 +15,29 @@ export function EventProposalResults({ data, event, actions, disabled }: { data:
   const [selected, setSelected] = useState<EventProposal | null>(null);
   const { user, openAuth } = useAuth();
   const savedFor = useRef('');
+  const allowAlternatives = data.budgetInsufficient ? false : data.allowAlternatives;
   useEffect(() => {
     if (!user || !data.proposals.length) return;
-    const key = `${user.id}:${JSON.stringify(event)}:${data.allowAlternatives}`;
+    const key = `${user.id}:${JSON.stringify(event)}:${allowAlternatives}`;
     if (savedFor.current === key) return;
     savedFor.current = key;
-    void privateApi('quotes/generated', { method: 'POST', body: JSON.stringify({ conversationState: { event, expectedField: null, eventDateParts: {}, ambiguities: [] }, allowAlternatives: data.allowAlternatives }) })
+    void privateApi('quotes/generated', { method: 'POST', body: JSON.stringify({ conversationState: { event, expectedField: null, eventDateParts: {}, ambiguities: [] }, allowAlternatives }) })
       .catch(() => { savedFor.current = ''; notify('No se pudo guardar esta cotización en tu cuenta. Puedes volver a comparar para intentarlo de nuevo.', 'error'); });
-  }, [user, event, data.allowAlternatives, data.proposals.length]);
+  }, [user, event, allowAlternatives, data.proposals.length]);
   function request(proposal: EventProposal) {
-    sessionStorage.setItem(PENDING_QUOTE_KEY, JSON.stringify({ event, proposalId: proposal.id, allowAlternatives: data.allowAlternatives, idempotencyKey: crypto.randomUUID() }));
+    sessionStorage.setItem(PENDING_QUOTE_KEY, JSON.stringify({ event, proposalId: proposal.id, allowAlternatives, idempotencyKey: crypto.randomUUID() }));
     setSelected(null);
     window.dispatchEvent(new Event('creafia-pending-quote'));
     if (!user) openAuth('login');
   }
-  const [budget, setBudget] = useState(data.suggestedBudget ?? event.budget ?? 0);
+  const [budget, setBudget] = useState(data.minimumTotal !== undefined ? Math.ceil(data.minimumTotal) : event.budget ?? 0);
   const [guests, setGuests] = useState(event.guestCount ?? 0);
   const count = data.proposals.length;
+  if (data.budgetInsufficient) return <section className="event-proposal-results" aria-label="Presupuesto insuficiente">
+    <div className="proposal-empty-actions"><p>El mínimo para los servicios que elegiste es {formatMoney(data.minimumTotal)}. Ingresa un presupuesto de al menos {formatMoney(data.minimumTotal)} para continuar.</p>
+      <div className="proposal-budget-edit"><label>Nuevo presupuesto (S/)<input type="number" min={Math.ceil(data.minimumTotal)} max="100000000" step="1" value={budget || ''} onChange={event => setBudget(Number(event.target.value))}/></label>
+        <SpecularButton type="button" disabled={disabled || budget < data.minimumTotal || budget > 100000000 || budget === event.budget} onClick={() => actions.onBudget(budget)}>Actualizar presupuesto</SpecularButton></div>
+    </div></section>;
   return <section className="event-proposal-results" aria-label="Propuestas para tu evento"><div className="proposal-results-heading"><h2>{count ? `Encontré ${count} ${count === 1 ? 'opción' : 'opciones'}.` : 'Faltan opciones para completar tu evento.'}</h2><p>Analicé {data.compatibleProviders} {data.compatibleProviders === 1 ? 'proveedor compatible' : 'proveedores compatibles'}.</p></div>
     {data.allowAlternatives && <p className="proposal-alternatives-note">Incluye alternativas hasta un 25% por encima del presupuesto; cada diferencia se muestra en su tarjeta.</p>}
     {!!count && <div className="proposal-card-grid">{data.proposals.map(proposal => <EventProposalCard key={proposal.id} proposal={proposal} onOpen={() => setSelected(proposal)}/>)}</div>}

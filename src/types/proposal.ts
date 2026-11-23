@@ -25,7 +25,8 @@ export type EventProposal = {
   improvedCategories: string[];
   isAlternative: boolean;
 };
-export type ProposalResults = {
+export type ProposalResults = { budgetInsufficient: true; minimumTotal: number; proposals: [] } | {
+  budgetInsufficient?: false;
   proposals: EventProposal[];
   compatibleProviders: number;
   compatibleServices: number;
@@ -39,4 +40,4 @@ export type ProposalResults = {
   allowAlternatives: boolean;
   searchLimited: boolean;
 };
-export type ServiceOptions = { options: { category: string; packages: number; compatiblePackages: number; capacityRanges: { min: number; max: number | null }[] }[] };
+export type ServiceOptions = { options: { category: string; availableForGuests: boolean }[] };

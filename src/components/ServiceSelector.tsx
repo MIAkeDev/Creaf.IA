@@ -43,8 +43,8 @@ export function ServiceSelector({ eventType, city, guestCount, selectedServices,
         <label className="service-all"><input ref={allRef} type="checkbox" checked={allSelected} onChange={event => setSelection(event.target.checked ? options : [])}/><span>Marcar todo</span></label>
         <div className="service-options">{options.map(service => {
           const registered = catalog.find(item => categoryKey(item.category) === categoryKey(service));
-          const hint = !registered ? 'Sin paquetes registrados para estos criterios.' : guestCount && !registered.compatiblePackages
-            ? `Capacidad registrada: ${registered.capacityRanges.map(range => range.max === null ? `desde ${range.min}` : `${range.min}–${range.max}`).join(', ')} personas; no cubre ${guestCount}.` : '';
+          const hint = !registered ? 'Sin opciones para estos criterios.' : guestCount && !registered.availableForGuests
+            ? 'No hay opciones para la cantidad de invitados indicada.' : '';
           return <label key={categoryKey(service)}><input type="checkbox" checked={selected.has(categoryKey(service))} onChange={event => setSelection(current => event.target.checked ? [...current.filter(item => categoryKey(item) !== categoryKey(service)), service] : current.filter(item => categoryKey(item) !== categoryKey(service)))}/><span>{service}{hint && <small className="service-capacity">{hint}</small>}</span></label>;
         })}</div>
         <div className="service-selector-footer"><SpecularButton type="submit" disabled={!selection.length || !changed}>{selectedServices.length ? 'Guardar cambios' : 'Confirmar servicios'}</SpecularButton><span className="service-help" role="status">{selection.length ? `${selection.length} ${selection.length === 1 ? 'servicio seleccionado' : 'servicios seleccionados'}` : 'Elige al menos un servicio.'}</span></div>

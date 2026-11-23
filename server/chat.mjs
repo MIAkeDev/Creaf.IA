@@ -1,5 +1,5 @@
 import { SYSTEM_PROMPT } from './system-prompt.mjs';
-import { applyEventUpdates, validateEventState } from '../shared/event-state.mjs';
+import { applyEventUpdates, getEventStatus, validateEventState } from '../shared/event-state.mjs';
 import { buildPlannerContext, finishPlannerResult, safePlannerResult, validateModelResult } from './event-planner.mjs';
 import { EVENT_RESPONSE_FORMAT } from './event-response-schema.mjs';
 import { localServiceResponse } from './service-intent.mjs';
@@ -63,7 +63,7 @@ function validatePlannerBody(parsed) {
   return { message: parsed.message.trim(), eventState, conversationState, conversationStarted: parsed.conversationStarted === true, lastAssistantMessage: parsed.lastAssistantMessage || '' };
 }
 
-export function createChatHandler(env, { fetchImpl = fetch, timeoutMs = 45000, now = () => new Date(), loadServiceOptions } = {}) {
+export function createChatHandler(env, { fetchImpl = fetch, timeoutMs = 45000, now = () => new Date(), loadServiceOptions, loadMinimumBudget } = {}) {
   let running = 0;
   const configuredLimit = Number(env.CHAT_MAX_CONCURRENT);
   const maxConcurrent = Number.isInteger(configuredLimit) && configuredLimit >= 1 && configuredLimit <= 32 ? configuredLimit : 8;
@@ -118,6 +118,14 @@ export function createChatHandler(env, { fetchImpl = fetch, timeoutMs = 45000, n
         reply(response, 200, completed);
       };
       sendSafeFallback = () => respond(safePlannerResult(groundedState, { ...options, message }));
+      if (!policyIssue && loadMinimumBudget && getEventStatus(groundedState) === 'ready' && !conversationState?.ambiguities.length && !Object.keys(conversationState?.eventDateParts || {}).length) {
+        const minimum = await loadMinimumBudget(groundedState);
+        if (Number.isFinite(minimum) && minimum > groundedState.budget) {
+          const amount = new Intl.NumberFormat('es-PE', { style: 'currency', currency: 'PEN' }).format(minimum);
+          respond({ reply: `El mínimo para los servicios que elegiste es ${amount}. Ingresa un presupuesto de al menos ${amount} para continuar.`, eventState: groundedState, preserveReply: true, suppressServiceSelectorReply: true });
+          return;
+        }
+      }
       if (policyIssue) {
         respond({ reply: `${policyIssue} ${conversationQuestion({ event: groundedState, expectedField: 'date', eventDateParts: {} })}`, eventState: groundedState, preserveReply: true, suppressServiceSelectorReply: true });
         return;

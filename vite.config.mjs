@@ -9,6 +9,7 @@ import { supabaseClients, administratorRequest, authenticatedRequest } from './s
 import { createQuoteApi } from './server/quotes/api.mjs';
 import { sendWhatsappTemplate, whatsappConfiguration } from './server/quotes/whatsapp.mjs';
 import { configuredMarkup } from './shared/pricing.mjs';
+import { providerSearch } from './server/proposals/providerSearch.mjs';
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
@@ -19,6 +20,10 @@ export default defineConfig(({ mode }) => {
   const quotes = createQuoteApi({ store, authenticate: request => authenticatedRequest(request, env), authorize: authorizeAdmin, getWhatsappConfig: () => whatsappConfiguration(env), sendWhatsapp: (to, audience, values) => sendWhatsappTemplate(to, audience, values, env) });
   const providers = createProviderApi({ store, images, authorizeAdmin, defaultMarkupPercent: configuredMarkup(env.DEFAULT_MARKUP_PERCENT) });
   const loadServiceOptions = async event => serviceOptions(await store.list(), event);
+  const loadMinimumBudget = async event => {
+    const cents = providerSearch(event, await store.list()).minimumTotal;
+    return cents === null ? null : cents / 100;
+  };
   return {
     server: {
       host: '127.0.0.1', port: 5173,
@@ -27,8 +32,8 @@ export default defineConfig(({ mode }) => {
     preview: { host: '127.0.0.1', port: 4173 },
     plugins: [{
       name: 'creafia-local-api',
-      configureServer(server) { server.middlewares.use(quotes); server.middlewares.use(providers); server.middlewares.use(createChatHandler(env, { loadServiceOptions })); },
-      configurePreviewServer(server) { server.middlewares.use(quotes); server.middlewares.use(providers); server.middlewares.use(createChatHandler(env, { loadServiceOptions })); },
+      configureServer(server) { server.middlewares.use(quotes); server.middlewares.use(providers); server.middlewares.use(createChatHandler(env, { loadServiceOptions, loadMinimumBudget })); },
+      configurePreviewServer(server) { server.middlewares.use(quotes); server.middlewares.use(providers); server.middlewares.use(createChatHandler(env, { loadServiceOptions, loadMinimumBudget })); },
     }],
   };
 });

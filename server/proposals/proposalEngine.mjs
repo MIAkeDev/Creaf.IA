@@ -17,6 +17,12 @@ function improvements(combo, reference) {
 }
 export function generateProposals(event, providers, { allowAlternatives = false, config = PROPOSAL_CONFIG } = {}) {
   const search = providerSearch(event, providers, { allowAlternatives, config });
+  // Do not reveal proposals or catalog diagnostics when the selected services
+  // cannot fit the stated budget. The minimum is the sum of one compatible
+  // package per selected category, never the cheapest individual package.
+  if (search.minimumTotal !== null && search.minimumTotal > cents(event.budget)) {
+    return { proposals: [], budgetInsufficient: true, minimumTotal: search.minimumTotal / 100 };
+  }
   const budget = cents(event.budget); const ceiling = Math.round(budget * (allowAlternatives ? config.alternativeUpgradeMax : config.bands.upgrade.max));
   const combinations = []; let visited = 0; let searchLimited = false;
   const minimumRemaining = search.groups.map((_, index) => search.groups.slice(index).reduce((total, group) => total + Math.min(...group.options.map(item => item.price)), 0));

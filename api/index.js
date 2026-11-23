@@ -8,6 +8,7 @@ import { supabaseClients, administratorRequest, authenticatedRequest } from '../
 import { createQuoteApi } from '../server/quotes/api.mjs';
 import { sendWhatsappTemplate, whatsappConfiguration } from '../server/quotes/whatsapp.mjs';
 import { configuredMarkup } from '../shared/pricing.mjs';
+import { providerSearch } from '../server/proposals/providerSearch.mjs';
 
 const env = process.env;
 const store = createSupabaseProviderStore(env);
@@ -16,7 +17,13 @@ const authorize = request => administratorRequest(request, env);
 const routes = [
   createQuoteApi({ store, authenticate: request => authenticatedRequest(request, env), authorize, getWhatsappConfig: () => whatsappConfiguration(env), sendWhatsapp: (to, audience, values) => sendWhatsappTemplate(to, audience, values, env) }),
   createProviderApi({ store, images: imageStore, authorizeAdmin: authorize, defaultMarkupPercent: configuredMarkup(env.DEFAULT_MARKUP_PERCENT) }),
-  createChatHandler(env, { loadServiceOptions: async event => serviceOptions(await store.list(), event) }),
+  createChatHandler(env, {
+    loadServiceOptions: async event => serviceOptions(await store.list(), event),
+    loadMinimumBudget: async event => {
+      const cents = providerSearch(event, await store.list()).minimumTotal;
+      return cents === null ? null : cents / 100;
+    },
+  }),
 ];
 
 export default async function handler(request, response) {

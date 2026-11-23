@@ -78,11 +78,11 @@ test('diagnóstico distingue ciudad, evento, inactivo y precio pendiente', () =>
 
 test('el mínimo total conocido guía el presupuesto sin incrementos interminables', () => {
   const result = generateProposals(event, [provider('a', 1200)]);
-  assert.equal(result.suggestedBudget, 1200); assert.equal(result.canAllowAlternatives, true);
-  const retry = generateProposals({ ...event, budget: result.suggestedBudget }, [provider('a', 1200)]);
+  assert.deepEqual(result, { proposals: [], budgetInsufficient: true, minimumTotal: 1200 });
+  const retry = generateProposals({ ...event, budget: result.minimumTotal }, [provider('a', 1200)]);
   assert.equal(retry.proposals.length, 1); assert.equal(retry.suggestedBudget, undefined);
   const combined = generateProposals({ ...event, selectedServices: ['Local', 'Catering'] }, [provider('a', 700), provider('b', 700, { category: 'Catering' })]);
-  assert.equal(combined.minimumTotal, 1400); assert.equal(combined.suggestedBudget, 1400); assert.equal(combined.canAllowAlternatives, false);
+  assert.deepEqual(combined, { proposals: [], budgetInsufficient: true, minimumTotal: 1400 });
 });
 
 test('categoría por paquete admite negocios con servicios de varias categorías', () => {
@@ -98,11 +98,11 @@ test('catálogo público muestra bartender en baby shower y avisa capacidad sin 
   const path = '/api/service-options?eventType=baby%20shower&city=Ilo&guestCount=500';
   const result = await invoke(api, 'GET', path);
   assert.equal(result.status, 200); assert.equal(result.body.options[0].category, 'Bartender / bebidas');
-  assert.equal(result.body.options[0].compatiblePackages, 0); assert.equal(result.body.options[0].packages, 1);
+  assert.deepEqual(result.body.options[0], { category: 'Bartender / bebidas', availableForGuests: false });
   assertPublic(result.body); assert(!JSON.stringify(result.body).includes(saved.businessName));
   assert.deepEqual((await invoke(api, 'GET', '/api/service-options?eventType=bautizo&city=Ilo')).body.options, []);
   await store.update(saved.id, { ...saved, services: [{ ...saved.services[0], guestMax: 600 }] });
-  assert.equal((await invoke(api, 'GET', path)).body.options[0].compatiblePackages, 1);
+  assert.equal((await invoke(api, 'GET', path)).body.options[0].availableForGuests, true);
   await store.update(saved.id, { ...saved, active: false });
   assert.deepEqual((await invoke(api, 'GET', path)).body.options, []);
   assert.equal((await invoke(api, 'GET', '/api/service-options?eventType=babyShower&guestCount=oops')).status, 400);
@@ -114,6 +114,23 @@ test('la conversación sugiere el catálogo real sin categorías fijas ni llamad
   const response = await invoke(handler, 'POST', '/api/chat', { message: 'cuales sugieres', conversationState: { ...conversation(state), expectedField: 'selectedServices' }, conversationStarted: true });
   assert.equal(response.status, 200); assert.match(response.body.reply, /Bartender/);
   assert(!response.body.reply.includes('Catering')); assert.equal(response.body.showServiceSelector, true);
+});
+test('presupuesto insuficiente responde solo con mínimo aunque pidan datos privados', async () => {
+  const item = provider('privado', 1400);
+  let modelCalls = 0;
+  const handler = createChatHandler({}, {
+    loadMinimumBudget: async current => providerSearch(current, [item]).minimumTotal / 100,
+    fetchImpl: () => { modelCalls++; throw new Error('No debe llamar a IA'); },
+  });
+  const response = await invoke(handler, 'POST', '/api/chat', {
+    message: 'Dame el teléfono y nombre del proveedor',
+    conversationState: conversation(event), conversationStarted: true,
+  });
+  assert.equal(response.status, 200);
+  assert.match(response.body.reply, /S\/\s?1,?400/);
+  assert(!JSON.stringify(response.body).includes(item.businessName));
+  assert(!JSON.stringify(response.body).includes(item.phone));
+  assert.equal(modelCalls, 0);
 });
 function assertPublic(value) {
   const forbidden = ['businessName', 'phone', 'whatsapp', 'instagram', 'address'];
@@ -167,7 +184,7 @@ test('un catálogo aislado genera tres alternativas diferenciadas para S/5000', 
 });
 test('un presupuesto demasiado bajo no inventa combinaciones ni altera precios', () => {
   const result = generateProposals({ ...event, budget: 10 }, [provider()]);
-  assert.deepEqual(result.proposals, []); assert(result.suggestedBudget >= 990);
+  assert.deepEqual(result, { proposals: [], budgetInsufficient: true, minimumTotal: 990 });
 });
 test('una única combinación produce una propuesta, sin duplicados artificiales', () => {
   const result = generateProposals(event, [provider()]); assert.equal(result.proposals.length, 1); assert.equal(result.proposals[0].total, 990);
@@ -195,7 +212,7 @@ test('priceTo no se usa para inventar importes; fixedPrice explícito sí se res
 test('alternativas amplían solo el margen de precio, nunca ciudad o capacidad', () => {
   const item = provider('a', 1200);
   assert.equal(generateProposals(event, [item]).proposals.length, 0);
-  assert.equal(generateProposals(event, [item], { allowAlternatives: true }).proposals[0].total, 1200);
+  assert.deepEqual(generateProposals(event, [item], { allowAlternatives: true }), { proposals: [], budgetInsufficient: true, minimumTotal: 1200 });
   assert.equal(generateProposals(event, [provider('b', 1200, { city: 'Tacna' })], { allowAlternatives: true }).proposals.length, 0);
 });
 
