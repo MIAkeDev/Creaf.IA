@@ -57,6 +57,8 @@ async function imageResponse(source, response, images) {
 }
 
 export function createProviderApi({ store = createProviderStore(), images = createImageStore(), authorizeAdmin = administratorRequest, defaultMarkupPercent = 10 } = {}) {
+  let activeProposalSearches = 0;
+  const maxConcurrentProposalSearches = 4;
   const applyDefaultMarkup = body => body && Array.isArray(body.services) ? { ...body, services: body.services.map(service => service && service.providerCost !== undefined && service.markupValue === undefined ? { ...service, markupValue: defaultMarkupPercent } : service) } : body;
   return async (request, response, next) => {
     const path = request.url?.split('?')[0];
@@ -99,7 +101,14 @@ export function createProviderApi({ store = createProviderStore(), images = crea
           if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || dateFromParts({ year, month, day }) !== date) throw new ProviderValidationError('Confirma una fecha completa y válida antes de comparar opciones.');
         }
         if (body.allowAlternatives !== undefined && typeof body.allowAlternatives !== 'boolean') throw new ProviderValidationError('Alternativas no válidas.');
-        return send(response, 200, generateProposals(conversation.event, await store.list(), { allowAlternatives: body.allowAlternatives === true }));
+        if (activeProposalSearches >= maxConcurrentProposalSearches) {
+          response.setHeader('Retry-After', '2');
+          return send(response, 429, { error: 'Hay muchas búsquedas en curso. Inténtalo de nuevo en un momento.' });
+        }
+        activeProposalSearches++;
+        try {
+          return send(response, 200, generateProposals(conversation.event, await store.list(), { allowAlternatives: body.allowAlternatives === true }));
+        } finally { activeProposalSearches--; }
       }
       if (collection && request.method === 'GET') return send(response, 200, { providers: await store.list() });
       if (collection && request.method === 'POST') return send(response, 201, { provider: await store.create(applyDefaultMarkup(await bodyOf(request))) });

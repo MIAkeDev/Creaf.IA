@@ -18,6 +18,7 @@ export async function sendMessageToAI(message: string, conversationState: Conver
     if (signal?.aborted) throw error;
     throw new Error('No pude conectar con el servidor. Comprueba que esté ejecutándose.', { cause: error });
   }
+  if (response.status === 429) throw new AIServiceError('Hay muchas solicitudes en este momento. Espera un minuto y vuelve a intentar.');
   let data: Partial<EventResult> & { error?: string };
   try { data = await response.json(); } catch { throw new Error('El servidor de IA no está disponible. Reinicia el proyecto con npm.cmd run dev.'); }
   if (!response.ok) {

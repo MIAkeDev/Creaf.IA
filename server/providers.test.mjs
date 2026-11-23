@@ -269,6 +269,23 @@ test('endpoint de propuestas solo entrega el DTO público, sin usar IA', async (
   const response = await invoke(createProviderApi({ store }), 'POST', '/api/proposals', { conversationState: conversation(event) });
   assert.equal(response.status, 200); assertPublic(response.body); assert.equal(response.body.proposals.length, 1);
 }));
+test('la API limita búsquedas de propuestas simultáneas por instancia', async () => {
+  let release; let entered = 0; let allEntered;
+  const gate = new Promise(resolve => { release = resolve; });
+  const ready = new Promise(resolve => { allEntered = resolve; });
+  const store = { async list() { if (++entered === 4) allEntered(); await gate; return [provider()]; } };
+  const api = createProviderApi({ store });
+  const body = { conversationState: conversation(event) };
+  const pending = Array.from({ length: 4 }, () => invoke(api, 'POST', '/api/proposals', body));
+  await ready;
+  const excess = await invoke(api, 'POST', '/api/proposals', body);
+  assert.equal(excess.status, 429);
+  assert.equal(excess.headers['Retry-After'], '2');
+  release();
+  const results = await Promise.all(pending);
+  assert(results.every(result => result.status === 200));
+  assert.equal((await invoke(api, 'POST', '/api/proposals', body)).status, 200);
+});
 test('rechaza búsquedas antes de ready o con ambigüedades pendientes', async () => withStore(async store => {
   const api = createProviderApi({ store });
   assert.equal((await invoke(api, 'POST', '/api/proposals', { conversationState: conversation({ ...event, date: null }) })).status, 409);

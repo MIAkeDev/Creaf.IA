@@ -4,6 +4,7 @@ import type { ConversationState } from '../types/event';
 import { accessToken, privateApi } from '../auth/client';
 async function api<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(`${import.meta.env.BASE_URL}${path}`, { ...init, headers: { 'Content-Type': 'application/json', ...init?.headers } });
+  if (response.status === 429) throw new Error('Hay muchas solicitudes en este momento. Espera un minuto y vuelve a intentar.');
   const data = await response.json().catch(() => ({ error: 'El servidor no devolvió una respuesta válida.' }));
   if (!response.ok) throw new Error(data.error || 'No se pudo completar la solicitud.');
   return data as T;
