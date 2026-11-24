@@ -39,14 +39,13 @@ export function ProviderImages({ provider, onChange, onUploadingChange }: { prov
     } finally { if (!ac.signal.aborted) { controller.current = null; setUploading(false); onUploadingChange(false); } }
   }
   function remove(image: string) { const remaining = images.filter(item => item !== image); onChange({ coverImage: provider.coverImage === image ? remaining[0] : provider.coverImage, evidenceImages: provider.evidenceImages.filter(item => item !== image) }); }
-  return <section className="admin-image-editor"><h2>Una primera impresión que cuente</h2><p className="admin-help">Sube fotos de tu equipo y las guardaremos optimizadas en WebP. Usa fotos sin logos, nombres ni contactos; se mostrarán al cliente.</p>
+  return <div className="admin-image-editor"><p className="admin-help">Sube fotos y las guardaremos optimizadas en WebP. Usa imágenes sin logos, nombres ni contactos; se mostrarán al cliente.</p>
     <fieldset className="admin-photo-controls" disabled={uploading}>
     <label className="admin-photo-upload">Subir fotos del equipo<input type="file" accept="image/jpeg,image/png,image/webp" multiple onChange={event => { const files = Array.from(event.target.files ?? []); event.target.value = ''; void upload(files); }}/><span className="admin-help">JPG, PNG o WebP · Hasta 10 MB por foto y 30 fotos por proveedor. Puedes elegir varias a la vez.</span></label>
-    <p className="admin-help">También puedes añadir una URL de images.unsplash.com / images.pexels.com o una ruta pública existente.</p>
-    <div className="admin-inline"><label>URL o ruta pública de imagen<input value={source} onChange={event => setSource(event.target.value)} onKeyDown={event => { if (event.key === 'Enter') { event.preventDefault(); add(); } }}/></label><SpecularButton type="button" onClick={add}>+ Agregar foto</SpecularButton></div>
+    <details className="admin-image-source"><summary>Usar una URL o ruta existente</summary><p className="admin-help">Admite imágenes de images.unsplash.com, images.pexels.com o una ruta pública del proyecto.</p><div className="admin-inline"><label>URL o ruta pública de imagen<input value={source} onChange={event => setSource(event.target.value)} onKeyDown={event => { if (event.key === 'Enter') { event.preventDefault(); add(); } }}/></label><SpecularButton type="button" onClick={add}>+ Agregar foto</SpecularButton></div></details>
     {error && <p role="alert" className="admin-error">{error}</p>}
     <div className="admin-image-grid">{images.map((image, index) => <figure key={image}><AdminImage source={image} alt={`Evidencia ${index + 1}`}/><label className="admin-check"><input type="radio" name="cover-image" checked={provider.coverImage === image} onChange={() => onChange({ coverImage: image })}/>Imagen principal</label><SpecularButton type="button" variant="ghost" size="sm" className="admin-quiet" onClick={() => remove(image)}>Quitar foto</SpecularButton></figure>)}</div>
     {!images.length && <div className="admin-empty">Las evidencias aparecerán aquí. Puedes guardar el proveedor sin fotos y agregarlas después.</div>}
     </fieldset>{status && <p role="status" className="admin-notice">{status}</p>}
-  </section>;
+  </div>;
 }

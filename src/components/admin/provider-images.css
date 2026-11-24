@@ -4,3 +4,7 @@
 .admin-photo-upload input::file-selector-button{border:1px solid #bad4d7;border-radius:11px;padding:10px 12px;margin-right:12px;background:#dceeed;color:#355d63;font:inherit;cursor:pointer}
 .admin-photo-upload .admin-help{margin:0}
 @media(max-width:500px){.admin-photo-upload{padding:14px}.admin-photo-upload input::file-selector-button{display:block;margin:0 0 8px}}
+.admin-image-source{margin:0 0 20px;border:1px solid #dbe9e9;border-radius:14px;padding:0 15px;background:#f5fbfa}
+.admin-image-source>summary{padding:13px 0;cursor:pointer;color:#39747a;font-weight:600;font-size:13px}
+.admin-image-source .admin-help{margin:0}
+.admin-image-source .admin-inline{margin:12px 0 16px}
